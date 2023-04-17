@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
 //public String ok(@MySessionStore User user){
 //
 //}
+
+//리졸버로 구현
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MySessionStore {
