@@ -14,7 +14,8 @@ import java.lang.annotation.Target;
 //
 //}
 
-//리졸버로 구현
+//MySessionArgumentResolver로 구현
+//: SessionUser를 MySessionArgumentResolver으로 주입
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MySessionStore {

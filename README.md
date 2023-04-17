@@ -62,3 +62,15 @@
     - @MyErrorLogRecord
     - @MySameUserIdCheck
     - @MySessionStore
+13. MySessionArgumentResolver로 MySessionStore 구현
+    - MySessionStore가 null이 아니거나, MySeesionStore의 파라미터가 SessionUser타입이면 세션에 세션 유저 주입
+    - 권한 체크하는 인터셉터 작성
+      - MyAdminInterceptor
+      - MySellerInterceptor
+    - WebMvcConfig 설정
+      - CORS 설정
+      - MessageConverter 설정
+      - ViewResolver 설정
+      - Interceptor 설정
+      - ArgumentResolver 설정
+    - FilterRegistrationBean에 필터 등록
