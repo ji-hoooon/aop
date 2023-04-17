@@ -2,15 +2,15 @@ package shop.mtcoding.metamall.dto.user;
 
 import lombok.Getter;
 import lombok.Setter;
+import shop.mtcoding.metamall.model.user.User;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class UserRequest {
+public class UserRequestDTO {
     @Getter @Setter
-    public static class LoginDto {
+    public static class LoginReqDTO {
         @NotEmpty
         private String username;
         @NotEmpty
@@ -18,7 +18,7 @@ public class UserRequest {
     }
 
     @Getter @Setter
-    public static class JoinDto {
+    public static class JoinReqDTO {
         @NotEmpty
         @Size(min = 3, max = 20)
         private String username;
@@ -32,6 +32,25 @@ public class UserRequest {
 
         @NotEmpty
         @Pattern(regexp = "USER|SELLER|ADMIN")
+        private String role;
+
+
+        //insert
+        public User toEntity() {
+            return User.builder()
+                    .username(username)
+                    .password(password)
+                    .email(email)
+                    .role(role)
+                    .status(true)
+                    .build();
+        }
+    }
+    @Getter
+    @Setter
+    //관리자만 상태를 변경할 수 있는 DTO
+    public static class RoleUpdateReqDTO{
+        @NotEmpty
         private String role;
     }
 }

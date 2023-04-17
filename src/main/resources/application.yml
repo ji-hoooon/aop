@@ -32,9 +32,10 @@ spring:
     resources:
       add-mappings: false
   #hibernateLazyInitializer 오류 해결법
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
+  # 빈이 null이면, Lazy Loading 기다렸다가 다시 값을 세팅한다.
+#  jackson:
+#    serialization:
+#      fail-on-empty-beans: false
 
 logging:
   level:

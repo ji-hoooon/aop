@@ -17,8 +17,9 @@ public class MyFilterRegisterConfig {
         registration.addUrlPatterns("/users/*");    //토큰 체크
         registration.addUrlPatterns("/products/*"); //토큰 체크
         registration.addUrlPatterns("/orders/*");   //토큰 체크
-        registration.addUrlPatterns("/admin/*");    //권한 체크
-        registration.addUrlPatterns("/seller/*");   //권한 체크
+        //인터셉터로 구현하는 권한 체크
+        registration.addUrlPatterns("/admin/*");    //토큰 체크, 권한 체크
+        registration.addUrlPatterns("/seller/*");   //토큰 체크, 권한 체크
         registration.setOrder(1);
         return registration;
     }

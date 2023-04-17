@@ -25,11 +25,16 @@ public class ResponseDTO<T> {
         this.status = HttpStatus.OK.value();
         this.msg = "성공";
         this.data = null;
-
     }
 
 
     //get, post, put 요청의 성공 응답에서 데이터를 본문으로 가지는 DTO
+    public ResponseDTO(Integer status, String msg, T data){
+        this.status = status;
+        this.msg = msg;
+        this.data = data;
+    }
+
     public ResponseDTO<?> data(T data){
         this.data = data; // 응답할 데이터 바디
         return this;

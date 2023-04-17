@@ -21,8 +21,10 @@ public class Product {
 
     //상품을 등록한 판매자 필드 (FK)
     //checkpoint - > 양방향 매핑시 무한참조 방지 필요 : @JsonIgnore -> 단방향 매핑 + fetch join / Entity Graph
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     private User seller;
+    //EAGER일 때 JOIN 발생
+
     @Column(nullable = false, length = 50)
     private String name; // 상품 이름
     private Integer price; // 상품 가격

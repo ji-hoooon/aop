@@ -74,3 +74,244 @@
       - Interceptor 설정
       - ArgumentResolver 설정
     - FilterRegistrationBean에 필터 등록
+14. 회원가입, 로그인
+    - LoginDTO, JoinDTO
+15. DTO 작성
+    - Entity에 ReqDTO를 만들 수 있도록 생성자에 @Builder 필요
+    - ReqDTO의 경우 유효성 검사 필요 (INSERT의 경우 toEntity 메서드 필요, 없으면 매번 생성해야하므로, UPDATE는 더티체킹)
+    - RespDTO의 경우 Entity로 만들기 때문에 엔티티를 이용해 생성자 작성 (JSON으로 보여주므로, 모두 문자열로 처리)
+16. JPA에서의 페이징
+    - @PageableDefault과 Pageable로 간단하게 페이징 구현
+    - 쿼리 결과는 모두 Page 객체로, 제네릭 타입을 전달한다.
+    - 즉, http://localhost:8080/products?page=2로 호출 가능
+    ```java
+    {
+     {
+    "status": 200,
+    "msg": "성공",
+    "data": {
+        "content": [
+            {
+                "id": 21,
+                "seller": {
+                    "id": 2,
+                    "username": "seller",
+                    "email": "ssar@nate.com",
+                    "role": "SELLER",
+                    "status": true,
+                    "createdAt": "2023-04-17T15:25:55.023427",
+                    "updatedAt": "2023-04-17T15:30:44.096868"
+                },
+                "name": "바나나",
+                "price": 3000,
+                "qty": 50,
+                "createdAt": "2023-04-17T15:40:00.697425",
+                "updatedAt": null
+            },
+            {
+                "id": 22,
+                "seller": {
+                    "id": 2,
+                    "username": "seller",
+                    "email": "ssar@nate.com",
+                    "role": "SELLER",
+                    "status": true,
+                    "createdAt": "2023-04-17T15:25:55.023427",
+                    "updatedAt": "2023-04-17T15:30:44.096868"
+                },
+                "name": "바나나",
+                "price": 3000,
+                "qty": 50,
+                "createdAt": "2023-04-17T15:40:03.248966",
+                "updatedAt": null
+            },
+            {
+                "id": 23,
+                "seller": {
+                    "id": 2,
+                    "username": "seller",
+                    "email": "ssar@nate.com",
+                    "role": "SELLER",
+                    "status": true,
+                    "createdAt": "2023-04-17T15:25:55.023427",
+                    "updatedAt": "2023-04-17T15:30:44.096868"
+                },
+                "name": "바나나",
+                "price": 3000,
+                "qty": 50,
+                "createdAt": "2023-04-17T15:40:03.662179",
+                "updatedAt": null
+            },
+            {
+                "id": 24,
+                "seller": {
+                    "id": 2,
+                    "username": "seller",
+                    "email": "ssar@nate.com",
+                    "role": "SELLER",
+                    "status": true,
+                    "createdAt": "2023-04-17T15:25:55.023427",
+                    "updatedAt": "2023-04-17T15:30:44.096868"
+                },
+                "name": "바나나",
+                "price": 3000,
+                "qty": 50,
+                "createdAt": "2023-04-17T15:40:05.083647",
+                "updatedAt": null
+            }
+        ],
+        "pageable": {
+            "sort": {
+                "empty": true,
+                "sorted": false,
+                "unsorted": true
+            },
+            "offset": 20,
+            "pageNumber": 2,
+            "pageSize": 10,
+            "paged": true,
+            "unpaged": false
+        },
+        "last": true,
+        "totalPages": 3,
+        "totalElements": 24,
+        "size": 10,
+        "number": 2,
+        "sort": {
+            "empty": true,
+            "sorted": false,
+            "unsorted": true
+        },
+        "first": false,
+        "numberOfElements": 4,
+        "empty": false
+    }
+}
+    ```
+
+16. 상품상세보기
+    - EAGER 전략으로, JOIN이 발생시 쿼리
+    ```sql
+    Hibernate:
+    select
+    product0_.id as id1_4_0_,
+    product0_.created_at as created_2_4_0_,
+    product0_.name as name3_4_0_,
+    product0_.price as price4_4_0_,
+    product0_.qty as qty5_4_0_,
+    product0_.seller_id as seller_i7_4_0_,
+    product0_.updated_at as updated_6_4_0_,
+    user1_.id as id1_5_1_,
+    user1_.created_at as created_2_5_1_,
+    user1_.email as email3_5_1_,
+    user1_.password as password4_5_1_,
+    user1_.role as role5_5_1_,
+    user1_.status as status6_5_1_,
+    user1_.updated_at as updated_7_5_1_,
+    user1_.username as username8_5_1_
+    from
+    product_tb product0_
+    left outer join
+    user_tb user1_
+    on product0_.seller_id=user1_.id
+    where
+    product0_.id=?
+    ```
+    - LAZY 전략으로, JOIN 발생하지 않는다.
+    - hibernateLazyInitializer 에러 발생 : 하이버네이트가 지연 로딩시 발생
+    ```sql
+    Hibernate: 
+    select
+        product0_.id as id1_4_0_,
+        product0_.created_at as created_2_4_0_,
+        product0_.name as name3_4_0_,
+        product0_.price as price4_4_0_,
+        product0_.qty as qty5_4_0_,
+        product0_.seller_id as seller_i7_4_0_,
+        product0_.updated_at as updated_6_4_0_ 
+    from
+        product_tb product0_ 
+    where
+        product0_.id=?
+    ```
+    ```sql
+    Hibernate: 
+    select
+        user0_.id as id1_5_0_,
+        user0_.created_at as created_2_5_0_,
+        user0_.email as email3_5_0_,
+        user0_.password as password4_5_0_,
+        user0_.role as role5_5_0_,
+        user0_.status as status6_5_0_,
+        user0_.updated_at as updated_7_5_0_,
+        user0_.username as username8_5_0_ 
+    from
+        user_tb user0_ 
+    where
+        user0_.id=?
+    ```
+    ```yaml
+    {
+    "status": 200,
+    "msg": "성공",
+    "data": {
+    "id": 1,
+    "seller": {
+    "id": 2,
+    "username": "seller",
+    "email": "ssar@nate.com",
+    "role": "SELLER",
+    "status": true,
+    "createdAt": "2023-04-17T15:50:31.935774",
+    "updatedAt": null,
+    "hibernateLazyInitializer"
+    }
+    }
+    }{
+    "status": 500,
+    "msg": "unknownServerError",
+    "data": "Type definition error: [simple type, class org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor]; nested exception is com.fasterxml.jackson.databind.exc.InvalidDefinitionException: No serializer found for class org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS) (through reference chain: shop.mtcoding.metamall.dto.ResponseDTO[\"data\"]->shop.mtcoding.metamall.model.product.Product[\"seller\"]->shop.mtcoding.metamall.model.user.User$HibernateProxy$XdMe7J00[\"hibernateLazyInitializer\"])"
+    }
+    ```
+    ```yaml
+    #hibernateLazyInitializer 오류 해결법 (4)
+    jackson:
+    serialization:
+    fail-on-empty-beans: false
+    ```
+    ```sql
+    Hibernate: 
+    select
+        product0_.id as id1_4_0_,
+        product0_.created_at as created_2_4_0_,
+        product0_.name as name3_4_0_,
+        product0_.price as price4_4_0_,
+        product0_.qty as qty5_4_0_,
+        product0_.seller_id as seller_i7_4_0_,
+        product0_.updated_at as updated_6_4_0_ 
+    from
+        product_tb product0_ 
+    where
+        product0_.id=?
+     ```
+    ```sql
+    Hibernate: 
+    select
+        user0_.id as id1_5_0_,
+        user0_.created_at as created_2_5_0_,
+        user0_.email as email3_5_0_,
+        user0_.password as password4_5_0_,
+        user0_.role as role5_5_0_,
+        user0_.status as status6_5_0_,
+        user0_.updated_at as updated_7_5_0_,
+        user0_.username as username8_5_0_ 
+    from
+        user_tb user0_ 
+    where
+        user0_.id=?
+    ```
+    - hibernateLazyInitializer 해결법
+    1. 서비스에서 직접 Lazy Loading 발동시키기
+    2. Join Fetch로 변경
+    3. Eager 전략으로 변경
+    4. fail-on-empty-beans : false
