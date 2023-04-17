@@ -1,4 +1,4 @@
-package shop.mtcoding.metamall.model.ordersheet;
+package shop.mtcoding.metamall.model.order.sheet;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
