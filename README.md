@@ -57,3 +57,8 @@
     - 유효성 실패 : 요청의 Body 데이터
     - 잘못된 파라미터 : @PathVariable
     - 400의 경우에는 메시지 뿐만 아니라, 잘못된 데이터를 함께 전달해야한다.
+12. AOP를 이용해 코드의 중복 제거와 로직의 일관성 제공
+    - AOP는 annoataion과 advice
+    - @MyErrorLogRecord
+    - @MySameUserIdCheck
+    - @MySessionStore

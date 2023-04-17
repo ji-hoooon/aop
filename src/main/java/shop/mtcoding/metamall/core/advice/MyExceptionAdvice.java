@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import shop.mtcoding.metamall.core.annotation.MyErrorLogRecord;
 import shop.mtcoding.metamall.core.exception.*;
 import shop.mtcoding.metamall.dto.ResponseDTO;
 import shop.mtcoding.metamall.model.log.error.ErrorLogRepository;
@@ -17,8 +18,9 @@ import shop.mtcoding.metamall.model.log.error.ErrorLogRepository;
 public class MyExceptionAdvice {
 
 //    private final ErrorLogRepository errorLogRepository;
-    //: AOP로 대체
+    //: AOP로 대체 -> @MyErrorLogRecord
 
+    @MyErrorLogRecord
     @ExceptionHandler(Exception400.class)
     public ResponseEntity<?> badRequest(Exception400 e){
         //로그 레벨에 따른 출력 범위 차이
@@ -32,11 +34,13 @@ public class MyExceptionAdvice {
         return new ResponseEntity<>(e.body(), e.status());
     }
 
+    @MyErrorLogRecord
     @ExceptionHandler(Exception401.class)
     public ResponseEntity<?> unAuthorized(Exception401 e){
         return new ResponseEntity<>(e.body(), e.status());
     }
 
+    @MyErrorLogRecord
     @ExceptionHandler(Exception403.class)
     public ResponseEntity<?> forbidden(Exception403 e){
         return new ResponseEntity<>(e.body(), e.status());
@@ -53,6 +57,7 @@ public class MyExceptionAdvice {
 //    }
 
     //어떠한 예외도 처리할 수 있도록
+    @MyErrorLogRecord
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<?> notFound(NoHandlerFoundException e){
 //        return new ResponseEntity<>(e.body(), e.status());
@@ -66,6 +71,7 @@ public class MyExceptionAdvice {
     //모든 예외처리
     //:모든 예외의 부모 처리 - 알 수 없는 예외로 로그처리 필수
     //checkpoint : AOP로 로그처리
+    @MyErrorLogRecord
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> serverError(Exception e){
         ResponseDTO<String> responseDTO = new ResponseDTO<>();

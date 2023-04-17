@@ -7,8 +7,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import shop.mtcoding.metamall.core.exception.Exception400;
+import shop.mtcoding.metamall.core.exception.Exception401;
 import shop.mtcoding.metamall.core.jwt.JwtProvider;
 import shop.mtcoding.metamall.core.session.LoginUser;
+import shop.mtcoding.metamall.core.session.SessionUser;
+import shop.mtcoding.metamall.core.util.MyFilterResponseUtil;
 import shop.mtcoding.metamall.dto.ResponseDTO;
 
 import javax.servlet.*;
@@ -25,34 +28,41 @@ public class JwtVerifyFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         String prefixJwt = req.getHeader(JwtProvider.HEADER);
         if(prefixJwt == null){
-            error(resp, new Exception400("tokenError", "토큰이 전달되지 않았습니다"));
+//            error(resp, new Exception400("토큰이 전달되지 않았습니다"));
+            //만든 Response유틸을 이용해 에러 반환
+            MyFilterResponseUtil.badRequest(resp, new Exception400("authorization", "토큰이 전달되지 않았습니다."));
             return;
+            //반환 필수
         }
         String jwt = prefixJwt.replace(JwtProvider.TOKEN_PREFIX, "");
         try {
             DecodedJWT decodedJWT = JwtProvider.verify(jwt);
-            int id = decodedJWT.getClaim("id").asInt();
+            Long id = decodedJWT.getClaim("id").asLong();
             String role = decodedJWT.getClaim("role").asString();
 
             // 세션을 사용하는 이유는 권한처리를 하기 위해서이다.
             HttpSession session =  req.getSession();
-            LoginUser loginUser = LoginUser.builder().id(id).role(role).build();
-            session.setAttribute("loginUser", loginUser);
+//            LoginUser loginUser = LoginUser.builder().id(id).role(role).build();
+//            session.setAttribute("loginUser", loginUser);
+            SessionUser sessionUser = SessionUser.builder().id(id).role(role).build();
+            session.setAttribute("sessionUser", sessionUser);
             chain.doFilter(req, resp);
         }catch (SignatureVerificationException sve){
-            error(resp, sve);
+//            error(resp, sve);
+            MyFilterResponseUtil.unAuthorized(resp, sve);
         }catch (TokenExpiredException tee){
-            error(resp, tee);
+//            error(resp, tee);
+            MyFilterResponseUtil.unAuthorized(resp, tee);
         }
     }
 
-    private void error(HttpServletResponse resp, Exception e) throws IOException {
-        resp.setStatus(401);
-        resp.setContentType("application/json; charset=utf-8");
-        ResponseDTO<?> responseDto = new ResponseDTO<>().fail(HttpStatus.UNAUTHORIZED, "인증 안됨", e.getMessage());
-        ObjectMapper om = new ObjectMapper();
-        String responseBody = om.writeValueAsString(responseDto);
-        resp.getWriter().println(responseBody);
-    }
+//    private void error(HttpServletResponse resp, Exception e) throws IOException {
+//        resp.setStatus(401);
+//        resp.setContentType("application/json; charset=utf-8");
+//        ResponseDTO<?> responseDto = new ResponseDTO<>().fail(HttpStatus.UNAUTHORIZED, "인증 안됨", e.getMessage());
+//        ObjectMapper om = new ObjectMapper();
+//        String responseBody = om.writeValueAsString(responseDto);
+//        resp.getWriter().println(responseBody);
+//    }
 
 }
