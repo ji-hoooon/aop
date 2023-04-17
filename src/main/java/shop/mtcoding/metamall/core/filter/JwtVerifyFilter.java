@@ -25,7 +25,7 @@ public class JwtVerifyFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         String prefixJwt = req.getHeader(JwtProvider.HEADER);
         if(prefixJwt == null){
-            error(resp, new Exception400("토큰이 전달되지 않았습니다"));
+            error(resp, new Exception400("tokenError", "토큰이 전달되지 않았습니다"));
             return;
         }
         String jwt = prefixJwt.replace(JwtProvider.TOKEN_PREFIX, "");

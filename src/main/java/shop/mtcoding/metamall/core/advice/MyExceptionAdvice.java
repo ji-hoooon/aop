@@ -21,6 +21,14 @@ public class MyExceptionAdvice {
 
     @ExceptionHandler(Exception400.class)
     public ResponseEntity<?> badRequest(Exception400 e){
+        //로그 레벨에 따른 출력 범위 차이
+        //개발시에는 debug, 운영시에는 info
+        //: trace -> debug -> info -> warn -> error
+        log.debug("디버그 : "+e.getMessage());
+        log.info("인포 : "+e.getMessage());
+        log.warn("경고: "+e.getMessage());
+        log.error("에러: "+e.getMessage());
+        log.trace("추적 : "+e.getMessage());
         return new ResponseEntity<>(e.body(), e.status());
     }
 
