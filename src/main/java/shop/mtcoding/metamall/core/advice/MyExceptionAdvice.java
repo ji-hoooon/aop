@@ -2,10 +2,13 @@ package shop.mtcoding.metamall.core.advice;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import shop.mtcoding.metamall.core.exception.*;
+import shop.mtcoding.metamall.dto.ResponseDTO;
 import shop.mtcoding.metamall.model.log.error.ErrorLogRepository;
 
 @Slf4j
@@ -13,7 +16,8 @@ import shop.mtcoding.metamall.model.log.error.ErrorLogRepository;
 @RestControllerAdvice
 public class MyExceptionAdvice {
 
-    private final ErrorLogRepository errorLogRepository;
+//    private final ErrorLogRepository errorLogRepository;
+    //: AOP로 대체
 
     @ExceptionHandler(Exception400.class)
     public ResponseEntity<?> badRequest(Exception400 e){
@@ -30,13 +34,35 @@ public class MyExceptionAdvice {
         return new ResponseEntity<>(e.body(), e.status());
     }
 
-    @ExceptionHandler(Exception404.class)
-    public ResponseEntity<?> notFound(Exception404 e){
-        return new ResponseEntity<>(e.body(), e.status());
+//    @ExceptionHandler(Exception404.class)
+//    public ResponseEntity<?> notFound(Exception404 e){
+//        return new ResponseEntity<>(e.body(), e.status());
+//    }
+//
+//    @ExceptionHandler(Exception500.class)
+//    public ResponseEntity<?> serverError(Exception500 e){
+//        return new ResponseEntity<>(e.body(), e.status());
+//    }
+
+    //어떠한 예외도 처리할 수 있도록
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<?> notFound(NoHandlerFoundException e){
+//        return new ResponseEntity<>(e.body(), e.status());
+        //직접 작성
+        ResponseDTO<String> responseDTO = new ResponseDTO<>();
+        responseDTO.fail(HttpStatus.NOT_FOUND, "notFound", e.getMessage());
+        return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
+        //커스텀 예외 작성하지 않았으므로 직접 작성
     }
 
-    @ExceptionHandler(Exception500.class)
-    public ResponseEntity<?> serverError(Exception500 e){
-        return new ResponseEntity<>(e.body(), e.status());
+    //모든 예외처리
+    //:모든 예외의 부모 처리 - 알 수 없는 예외로 로그처리 필수
+    //checkpoint : AOP로 로그처리
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> serverError(Exception e){
+        ResponseDTO<String> responseDTO = new ResponseDTO<>();
+        responseDTO.fail(HttpStatus.INTERNAL_SERVER_ERROR, "unknownServerError", e.getMessage());
+        return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
+        //커스텀 예외 작성하지 않았으므로 직접 작성
     }
 }

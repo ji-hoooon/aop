@@ -2,7 +2,7 @@ package shop.mtcoding.metamall.core.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import shop.mtcoding.metamall.dto.ResponseDto;
+import shop.mtcoding.metamall.dto.ResponseDTO;
 
 
 // 권한 없음
@@ -12,8 +12,8 @@ public class Exception403 extends RuntimeException {
         super(message);
     }
 
-    public ResponseDto<?> body(){
-        ResponseDto<String> responseDto = new ResponseDto<>();
+    public ResponseDTO<?> body(){
+        ResponseDTO<String> responseDto = new ResponseDTO<>();
         responseDto.fail(HttpStatus.FORBIDDEN, "forbidden", getMessage());
         return responseDto;
     }

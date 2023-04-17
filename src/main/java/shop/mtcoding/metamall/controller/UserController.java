@@ -6,9 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import shop.mtcoding.metamall.core.exception.Exception400;
 import shop.mtcoding.metamall.core.exception.Exception401;
 import shop.mtcoding.metamall.core.jwt.JwtProvider;
-import shop.mtcoding.metamall.dto.ResponseDto;
+import shop.mtcoding.metamall.dto.ResponseDTO;
 import shop.mtcoding.metamall.dto.user.UserRequest;
-import shop.mtcoding.metamall.dto.user.UserResponse;
 import shop.mtcoding.metamall.model.log.login.LoginLog;
 import shop.mtcoding.metamall.model.log.login.LoginLogRepository;
 import shop.mtcoding.metamall.model.user.User;
@@ -54,7 +53,7 @@ public class UserController {
             loginLogRepository.save(loginLog);
 
             // 6. 응답 DTO 생성
-            ResponseDto<?> responseDto = new ResponseDto<>().data(loginUser);
+            ResponseDTO<?> responseDto = new ResponseDTO<>().data(loginUser);
             return ResponseEntity.ok().header(JwtProvider.HEADER, jwt).body(responseDto);
         } else {
             throw new Exception400("유저네임 혹은 아이디가 잘못되었습니다");

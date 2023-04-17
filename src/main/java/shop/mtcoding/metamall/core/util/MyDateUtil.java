@@ -1,4 +1,4 @@
-package shop.mtcoding.metamall.util;
+package shop.mtcoding.metamall.core.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

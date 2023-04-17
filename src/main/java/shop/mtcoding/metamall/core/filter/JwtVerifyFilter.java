@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import shop.mtcoding.metamall.core.exception.Exception400;
 import shop.mtcoding.metamall.core.jwt.JwtProvider;
 import shop.mtcoding.metamall.core.session.LoginUser;
-import shop.mtcoding.metamall.dto.ResponseDto;
+import shop.mtcoding.metamall.dto.ResponseDTO;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +49,7 @@ public class JwtVerifyFilter implements Filter {
     private void error(HttpServletResponse resp, Exception e) throws IOException {
         resp.setStatus(401);
         resp.setContentType("application/json; charset=utf-8");
-        ResponseDto<?> responseDto = new ResponseDto<>().fail(HttpStatus.UNAUTHORIZED, "인증 안됨", e.getMessage());
+        ResponseDTO<?> responseDto = new ResponseDTO<>().fail(HttpStatus.UNAUTHORIZED, "인증 안됨", e.getMessage());
         ObjectMapper om = new ObjectMapper();
         String responseBody = om.writeValueAsString(responseDto);
         resp.getWriter().println(responseBody);
