@@ -2,6 +2,7 @@ package shop.mtcoding.metamall.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import shop.mtcoding.metamall.core.exception.Exception400;
 import shop.mtcoding.metamall.core.exception.Exception401;
@@ -15,6 +16,7 @@ import shop.mtcoding.metamall.model.user.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -27,7 +29,8 @@ public class UserController {
     private final HttpSession session;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserRequest.LoginDto loginDto, HttpServletRequest request) {
+    public ResponseEntity<?> login(@RequestBody @Valid UserRequest.LoginDto loginDto, Errors errors,
+                                   HttpServletRequest request) {
         Optional<User> userOP = userRepository.findByUsername(loginDto.getUsername());
         if (userOP.isPresent()) {
             // 1. 유저 정보 꺼내기
