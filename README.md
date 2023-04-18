@@ -28,7 +28,11 @@
    - 즉, MyBatis의 경우 데이터베이스의 테이블 구조에 의존해야 하는 단점이 있다. 
    - 데이터베이스의 스키마가 변경되면 SQL 쿼리와 매핑되는 XML 파일도 변경되어야 하기 때문이다.
    - 반면에 JPA를 사용하면 데이터베이스의 스키마 변경이 있더라도 대부분 자동으로 처리되므로, 비교적 유연한 코드 작성이 가능하다.
-7. 양방향 매핑 : OrderProduct - OrderSheet
+
+
+
+
+1. 양방향 매핑 : OrderProduct - OrderSheet
    - 연관관계의 비주인에서 mappedBy 속성으로 연관관계의 주인을 명시한다. 
    - 무한참조 방지해야 함
    - DB에서는 id를 통해 join한다.
@@ -603,6 +607,28 @@
     - 성공 200
     - 실패 400, 401, 403, 404, 500
 
+23. 관리자만 들어갈 수 있도록 인터셉터에서 권한 체크를 하는 관리자 컨트롤러
+    - 권한을 변경하는데 유효성 검증하도록 ReqDTO에도 유효성 검증 필수
+    ```java
+    @Getter
+    @Setter
+    //관리자만 상태를 변경할 수 있는 DTO
+    public static class RoleUpdateReqDTO{
+        @NotEmpty
+        @Pattern(regexp = "USER|SELLER|ADMIN")
+        private String role;
+    }
+    ```
+    - 권한 변경 후에는 재로그인해야 권한이 정상적으로 변경된다.
+    - JWT에 들어있는 권한을 보고 요청을 처리하기 때문이다.
+    - 만약, 권한을 변경했다면 문자나 이메일로 재로그인을 해야한다고 알림을 해야한다.
+24. 푸시 알림을 위한 알림서버
+    - Firebase의 FCM 
+    - FireStore
+    - WebSocket
+    - Messaging Service
+    - MongoDB
+    - RabitMQ, Kafka
 
 
 
