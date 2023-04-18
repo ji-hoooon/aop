@@ -51,6 +51,7 @@ public class UserRequestDTO {
     //관리자만 상태를 변경할 수 있는 DTO
     public static class RoleUpdateReqDTO{
         @NotEmpty
+        @Pattern(regexp = "USER|SELLER|ADMIN")
         private String role;
     }
 }
