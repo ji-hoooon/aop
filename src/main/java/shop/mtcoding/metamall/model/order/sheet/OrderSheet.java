@@ -1,5 +1,6 @@
 package shop.mtcoding.metamall.model.order.sheet;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,10 +28,12 @@ public class OrderSheet {
     private User user; // 주문자
 
     //checkpoint - > 양방향 매핑시 무한참조 방지 필요 : @JsonIgnore -> 단방향 매핑 + fetch join / Entity Graph
+    //: JsonIgnoreProperties로 무한참조 방지
     //양방향 매핑
     // 주문서 (양방향 매핑을 이용해 주문서 입장에서 주문 조회, 주문 수정, 주문 삭제 가능)
     //: 연관관계의 모든 영속 객체의 flush가 동시에 발생하도록 -> cascade 설정한다. -> PERSIST 조회만 가능, ALL 모두 가능 (REMOVE, DETACH 포함)
     //: 연관관계의 객체가 고아객체가 되면 자동 삭제 설정, orphanRemoval = true
+    @JsonIgnoreProperties({"orderSheet"})
     @OneToMany(mappedBy = "orderSheet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderProduct> orderProductList = new ArrayList<>(); // 총 주문 상품 리스트
 

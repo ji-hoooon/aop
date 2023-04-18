@@ -92,24 +92,46 @@ public class ProductController {
         return ResponseEntity.ok().body(responseDto);
     }
 
-//    @Transactional // 더티체킹 하고 싶다면 붙이기!!
-//    @PutMapping("/seller/products/{id}")
-//    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid ProductRequestDTO.UpdateReqDTO updateReqDTO, Errors errors){
-//        // 1. 상품 찾기
+    @Transactional // 더티체킹 하고 싶다면 붙이기!!
+    //: 영속객체의 flush()를 위해 메서드 종료시 트랜잭션 커밋을 해주는 어노테이션
+    //: 트랜잭션을 사용하지 않고 구현하기 위해서는, 변경된 영속 객체를 다시 save() 해주면 된다. ->merge 수행
+    @PutMapping("/seller/products/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid ProductRequestDTO.UpdateReqDTO updateReqDTO, Errors errors){
+        // 1. 상품 찾기
 //        Product productPS = productRepository.findById(id).orElseThrow(()-> new Exception400("id", "해당 상품을 찾을 수 없습니다"));
-//
-//        // 2. Update 더티체킹
-//        productPS.update(updateReqDTO.getName(), updateReqDTO.getPrice(), updateReqDTO.getQty());
-//
-//        // 3. 응답하기
-//        ResponseDTO<?> responseDto = new ResponseDTO<>().data(productPS);
-//        return ResponseEntity.ok().body(responseDto);
-//    }
+        Product productPS = productRepository.findById(id).orElseThrow(()-> new Exception400("id", "해당 상품을 찾을 수 없습니다"));
+        //영속 객체
 
+        // 2. Update 더티체킹
+        productPS.update(updateReqDTO.getName(), updateReqDTO.getPrice(), updateReqDTO.getQty());
+        //영속 객체의 변경 -> 더티 체킹 수행 (변경 감지)
+
+        //직접 merge 수행하기 위한 코드
+//        productRepository.save(productPS);
+
+        // 3. 응답하기
+        ResponseDTO<?> responseDto = new ResponseDTO<>().data(productPS);
+        return ResponseEntity.ok().body(responseDto);
+        //: 응답 후에, 쿼리가 날라가도록 하기 위해서는 트랜잭션 커밋이 필요 -> @Transactional
+    }
+
+
+    /**
+     * 쿼리메서드의 DELETE를 사용하지 않는 이유
+     * : DELETE하는 동안 트랜잭션 락이 걸리기 때문에, 락이 걸린 동안에 다른 작업이 불가능 (SELECT만 가능
+     * -> deleteById는 사용 하지 말것
+     * findById -> delete 수행하도록 한다.
+     * @param id
+     * @return
+     */
     @DeleteMapping("/seller/products/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        //(1) 전달 받은 값을 확인하는 절차
         Product productPS = productRepository.findById(id).orElseThrow(() -> new Exception400("id", "해당 상품을 찾을 수 없습니다"));
+        //(2) 삭제 수행
         productRepository.delete(productPS);
+
+        //(3) 응답
         ResponseDTO<?> responseDto = new ResponseDTO<>();
         return ResponseEntity.ok().body(responseDto);
     }

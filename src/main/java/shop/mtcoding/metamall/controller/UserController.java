@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import shop.mtcoding.metamall.core.advice.MyValidAdvice;
 import shop.mtcoding.metamall.core.exception.Exception400;
 import shop.mtcoding.metamall.core.exception.Exception401;
 import shop.mtcoding.metamall.core.jwt.JwtProvider;
@@ -19,6 +20,7 @@ import shop.mtcoding.metamall.model.user.UserRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -33,6 +35,10 @@ public class UserController {
     //회원가입 핸들러 메서드
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody @Valid UserRequestDTO.JoinReqDTO joinReqDTO, Errors errors) {
+        //1. 해당 유저가 이미 존재하는지 체크
+        if(userRepository.findByUsername(joinReqDTO.getUsername()).isPresent()){
+            throw new Exception400("usernameError","이미 존재하는 회원입니다.");
+        }
 
         //매번 빌더패턴을 이용해서 엔티티 생성해야하는 불편함
 //        User user = User.builder()

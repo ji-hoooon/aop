@@ -31,7 +31,7 @@ public class ProductRequestDTO {
         private Integer qty; // 상품 재고
 
         //DTO를 이용해 엔티티를 만드는 메서드
-        public Product toEntity(User user){
+        public Product toEntity(User user) {
             return Product.builder()
                     .seller(user)
                     .name(name)
@@ -45,10 +45,18 @@ public class ProductRequestDTO {
     @Setter
     public static class UpdateReqDTO {
         //상품 이름, 상품 가격, 상품 재고 변경을 위한 DTO
+        @NotEmpty
+        private String name;
+
+        @Digits(fraction = 0, integer = 9)
+        @NotNull
+        private Integer price;
+
+        @Digits(fraction = 0, integer = 9)
+        @NotNull
+        private Integer qty;
 
     }
-
-
 
 
 }

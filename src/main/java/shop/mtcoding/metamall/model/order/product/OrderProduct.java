@@ -1,5 +1,6 @@
 package shop.mtcoding.metamall.model.order.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,8 @@ public class OrderProduct { // 주문 상품
     private Long id;
 
     //checkpoint - > 양방향 매핑시 무한참조 방지 필요 : @JsonIgnore-> 단방향 매핑 + fetch join / Entity Graph
+    @JsonIgnoreProperties({"seller"})
+    //: 주문서에 굳이 판매자 안나와도 되므로 -> DTO로 만들어도 된다.
     @ManyToOne
     private Product product;
 
